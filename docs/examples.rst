@@ -1,39 +1,50 @@
 Examples
 ========
 
-.. note::
-   The documentation for the examples must still be completed.
 
 ProjectQ
 --------
 .. toctree::
+   :maxdepth: 3
+   :titlesonly:
+   :glob:
 
-..
-   examples/example_projectq
-   examples/example_projectq_entangle
+   examples/example_projectq.ipynb
+   example_projectq_entangle
+   example_projectq_grover
+
 
 Qiskit
 ------
 .. toctree::
+   :maxdepth: 3
+   :titlesonly:
+   :glob:
 
-..
-   examples/example_qiskit_conditional
+   example_qiskit_conditional
+   example_qiskit_entangle
 
 Classifier
 ----------
+.. note::
+   This documentation needs to be reformatted.
 
 .. toctree::
+   :maxdepth: 3
+   :titlesonly:
+   :glob:
 
-..
-   examples/classifier_example/classification_example1_2_data_points
-   examples/classifier_example\classification_example2_4_data_points
-   examples/classifier_example\classification_example3_4_features
+   classification_part_1
+   classification_part_2
+   classification_part_3
 
 General
 -------
 
 .. toctree::
+   :maxdepth: 3
+   :titlesonly:
+   :glob:
 
-..
-   examples/grover_algorithm_qi
-   examples/qi-performance-test
+   grover
+   qi-performance-test

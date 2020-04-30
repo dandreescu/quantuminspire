@@ -14,12 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Module exceptions
-=================
-
-"""
-
 
 class QisKitBackendError(Exception):
     """ Exception for SDK errors related to the qiskit backend."""

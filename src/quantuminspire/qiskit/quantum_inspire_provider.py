@@ -42,10 +42,11 @@ class QuantumInspireProvider(BaseProvider):  # type: ignore
     def backends(self, name: Optional[str] = None, **kwargs: Any) -> List[QuantumInspireBackend]:
         """ Provides a list of backends.
 
-        :param name: Name of the requested backend.
-        :param kwargs: Used for filtering, not implemented.
+        Args:
+            name: Name of the requested backend.
+            kwargs: Used for filtering, not implemented.
 
-        :return:
+        Returns:
             List of backends that meet the filter requirements.
         """
         if self._api is None:
@@ -70,9 +71,10 @@ class QuantumInspireProvider(BaseProvider):  # type: ignore
            Replaced with method :meth:`~.set_basic_authentication`
 
 
-        :param email: A valid email address.
-        :param password: Password for the account.
-        :param qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
+        Args:
+            email: A valid email address.
+            password: Password for the account.
+            qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
 
         """
         self.set_basic_authentication(email, password, qi_url)
@@ -80,9 +82,10 @@ class QuantumInspireProvider(BaseProvider):  # type: ignore
     def set_basic_authentication(self, email: str, password: str, qi_url: str = QI_URL) -> None:
         """Set up basic authentication for Quantum Inspire.
 
-        :param email: A valid email address.
-        :param password: Password for the account.
-        :param qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
+        Args:
+            email: A valid email address.
+            password: Password for the account.
+            qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
         """
         authentication = get_basic_authentication(email, password)
         self.set_authentication(authentication, qi_url)
@@ -91,8 +94,9 @@ class QuantumInspireProvider(BaseProvider):  # type: ignore
         """
         Set up token authentication for Quantum Inspire.
 
-        :param token: A valid token.
-        :param qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
+        Args:
+            token: A valid token.
+            qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
         """
         authentication = get_token_authentication(token)
         self.set_authentication(authentication, qi_url)
@@ -102,13 +106,14 @@ class QuantumInspireProvider(BaseProvider):  # type: ignore
         """
         Initializes the API and sets the authentication for Quantum Inspire.
 
-        :param authentication: The authentication, can be one of the following coreapi authentications:
+        Args:
+            authentication: The authentication, can be one of the following coreapi authentications:
 
-            * ``BasicAuthentication(email, password)``, HTTP authentication with valid email/password.
-            * ``TokenAuthentication(token, scheme="token")``, token authentication with a valid API-token.
+                * ``BasicAuthentication(email, password)``, HTTP authentication with valid email/password.
+                * ``TokenAuthentication(token, scheme="token")``, token authentication with a valid API-token.
 
-            When authentication is ``None``, the api will try to load a token from the default resource.
+                When authentication is ``None``, the api will try to load a token from the default resource.
 
-        :param qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
+            qi_url: URL that points to quantum-inspire api. Default value: 'https://api.quantum-inspire.com'.
         """
         self._api = QuantumInspireAPI(qi_url, authentication)

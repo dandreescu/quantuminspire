@@ -42,10 +42,11 @@ class QIJob(BaseJob):  # type: ignore
         """
         Construct a new QIJob object. Not normally called directly, use a backend object to create/retrieve jobs.
 
-        :param backend: A quantum-inspire backend.
-        :param job_id: Id of the job as provided by the quantum-inspire api.
-        :param api: A quantum-inspire api.
-        :param qobj: A qiskit quantum object.
+        Args:
+            backend: A quantum-inspire backend.
+            job_id: Id of the job as provided by the quantum-inspire api.
+            api: A quantum-inspire api.
+            qobj: A qiskit quantum object.
         """
         self._api: QuantumInspireAPI = api
         super().__init__(backend, job_id)
@@ -61,7 +62,8 @@ class QIJob(BaseJob):  # type: ignore
         """
         Submit a job to the quantum-inspire platform.
 
-        :raises JobError: An error if the job has already been submitted.
+        Raises:
+            JobError: An error if the job has already been submitted.
         """
         if self._job_id:
             raise JobError('Job has already been submitted!')
@@ -70,14 +72,16 @@ class QIJob(BaseJob):  # type: ignore
     def result(self, timeout: Optional[float] = None, wait: float = 0.5) -> Result:
         """
 
-        :param timeout: Timeout in seconds.
-        :param wait: Wait time between queries to the quantum-inspire platform.
+        Args:
+            timeout: Timeout in seconds.
+            wait: Wait time between queries to the quantum-inspire platform.
 
-        :return:
+        Returns:
             Result object containing results from the experiments.
 
-        :raises JobTimeoutError: If timeout is reached.
-        :raises QisKitBackendError: If an error occurs during simulation.
+        Raises:
+            JobTimeoutError: If timeout is reached.
+            QisKitBackendError: If an error occurs during simulation.
         """
         start_time = time.time()
         while self.status() not in JOB_FINAL_STATES:
@@ -97,7 +101,7 @@ class QIJob(BaseJob):  # type: ignore
         """
         Query the quantum-inspire platform for the status of the job.
 
-        :return:
+        Returns:
             The status of the job.
         """
         jobs = self._api.get_jobs_from_project(int(self._job_id))

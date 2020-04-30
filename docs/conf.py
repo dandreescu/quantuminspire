@@ -33,8 +33,15 @@ author = 'QuTech'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'sphinx_rtd_theme',
-    'recommonmark'
+    'sphinx.ext.viewcode',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.autosummary',
+    'nbsphinx',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.autosectionlabel',
+    'sphinx_automodapi.automodapi',
 ]
 
 autoclass_content = 'both'
@@ -42,13 +49,17 @@ autodoc_member_order = 'bysource'
 add_module_names = False
 autodoc_typehints = 'description'
 
+nbsphinx_execute = 'never'
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = [
+    'build',
+]
 
 
 # -- Options for HTML output -------------------------------------------------

@@ -93,5 +93,5 @@ setup(name='quantuminspire',
       extras_require={
           'qiskit': ["qiskit>=0.9.0"],
           'projectq': ["projectq>=0.4"],
-          'rtd': ['sphinx', 'sphinx_rtd_theme', 'nbsphinx', 'recommonmark'],
+          'rtd': ['sphinx', 'sphinx_rtd_theme', 'nbsphinx', 'recommonmark', 'sphinx-automodapi'],
       })

@@ -45,13 +45,15 @@ class QIBackend(BasicEngine):  # type: ignore
         """
         Initialize the Backend object.
 
-        :param num_runs: Number of runs to collect statistics (default is 1024).
-        :param verbose: Verbosity level, defaults to 0, which produces no extra output.
-        :param quantum_inspire_api: Connection to QI platform, optional parameter.
-        :param backend_type: Backend to use for execution.
-            When no backend_type is provided, the default backend will be used.
+        Args:
+            num_runs: Number of runs to collect statistics (default is 1024).
+            verbose: Verbosity level, defaults to 0, which produces no extra output.
+            quantum_inspire_api: Connection to QI platform, optional parameter.
+            backend_type: Backend to use for execution.
+                When no backend_type is provided, the default backend will be used.
 
-        :raises AuthenticationError: When an authentication error occurs.
+        Raises:
+            AuthenticationError: When an authentication error occurs.
         """
         BasicEngine.__init__(self)
         self._flushed: bool = False
@@ -89,9 +91,11 @@ class QIBackend(BasicEngine):  # type: ignore
         """
         Via this method the ProjectQ framework determines which commands (gates) are available in the backend.
 
-        :param cmd: Command with a gate for which to check availability.
+        Args:
+            cmd: Command with a gate for which to check availability.
 
-        :return: True when the gate in the command is available on the Quantum Inspire backend.
+        Returns:
+            True when the gate in the command is available on the Quantum Inspire backend.
         """
         count = get_control_count(cmd)
         g = cmd.gate
@@ -247,9 +251,10 @@ class QIBackend(BasicEngine):  # type: ignore
         """
         Return the allocated location on the simulated backend of the qubit with the given physical qubit id.
 
-        :param physical_qubit_id: ID of the physical qubit whose position should be returned.
+        Args:
+            physical_qubit_id: ID of the physical qubit whose position should be returned.
 
-        :return:
+        Returns:
             Allocated simulation bit position of physical qubit with id pqb_id.
         """
         if self._is_simulation_backend:
@@ -281,7 +286,8 @@ class QIBackend(BasicEngine):  # type: ignore
 
         Translates the command and stores the results in local variables.
 
-        :param cmd: Command to store.
+        Args:
+            cmd: Command to store.
         """
         if self._verbose >= 3:
             print('_store {0}: cmd {1}'.format(id(self), cmd))
@@ -381,9 +387,10 @@ class QIBackend(BasicEngine):  # type: ignore
     def _logical_to_physical(self, logical_qubit_id: int) -> int:
         """Return the physical location of the qubit with the given logical id.
 
-        :param logical_qubit_id: ID of the logical qubit whose position should be returned.
+        Args:
+            logical_qubit_id: ID of the logical qubit whose position should be returned.
 
-        :return:
+        Returns:
             Physical position of logical qubit with id qb_id.
         """
         if self.main_engine.mapper is not None:
@@ -407,12 +414,14 @@ class QIBackend(BasicEngine):  # type: ignore
         .. warning::
             Only call this function after the circuit has been executed!
 
-        :param qureg: Quantum register of size n determining the contents of the probability states.
+        Args:
+            qureg: Quantum register of size n determining the contents of the probability states.
 
-        :return:
+        Returns:
             Dictionary mapping n-bit strings of ``0`` and ``1`` to probabilities.
 
-        :raises RuntimeError: If no data is available (i.e., if the circuit has
+        Raises:
+            RuntimeError: If no data is available (i.e., if the circuit has
                 not been executed). Or if a qubit was supplied which was not
                 present in the circuit (might have gotten optimized away).
         """
@@ -430,10 +439,11 @@ class QIBackend(BasicEngine):  # type: ignore
     def _map_state_to_bit_string(self, state: int, qureg: List[Qubit]) -> str:
         """ Map the state to a bit string
 
-        :param state: state represented as an integer number.
-        :param qureg: list of qubits for which to extract the state bit.
+        Args:
+            state: state represented as an integer number.
+            qureg: list of qubits for which to extract the state bit.
 
-        :return:
+        Returns:
             A string of ``0`` and ``1`` corresponding to the bit value in state of each Qubit in qureg.
 
         Example:
@@ -493,7 +503,8 @@ class QIBackend(BasicEngine):  # type: ignore
 
         Sets :attr:`_quantum_inspire_result` with the result object in the API response.
 
-        :raises ProjectQBackendError: When `raw_text` in result from API is not empty (indicating a backend error).
+        Raises:
+            ProjectQBackendError: When `raw_text` in result from API is not empty (indicating a backend error).
         """
         self._quantum_inspire_result = self._quantum_inspire_api.execute_qasm(
             self._cqasm,
@@ -521,10 +532,11 @@ class QIBackend(BasicEngine):  # type: ignore
     def _filter_histogram(histogram: Dict[int, float], mask_bits: Iterator[int]) -> Dict[int, float]:
         """ Filter a histogram by mask_bits.
 
-        :param histogram: input histogram mapping state to probability.
-        :param mask_bits: list of bits that are to be kept in the filtered histogram.
+        Args:
+            histogram: input histogram mapping state to probability.
+            mask_bits: list of bits that are to be kept in the filtered histogram.
 
-        :return:
+        Returns:
             Collapsed histogram mapping state to probability.
 
         Keys in a histogram dict are the states represented as an integer number (may be int or string), values the
@@ -582,7 +594,8 @@ class QIBackend(BasicEngine):  # type: ignore
         """
         Receives a command list and, for each command, stores it until completion.
 
-        :param command_list: List of commands to execute.
+        Args:
+            command_list: List of commands to execute.
         """
         for cmd in command_list:
             if not cmd.gate == FlushGate():

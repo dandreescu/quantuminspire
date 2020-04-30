@@ -14,13 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Module job
-==========
-
-.. autoclass:: QuantumInspireJob
-   :members:
-"""
 
 from typing import Dict, Any
 from coreapi.exceptions import ErrorMessage
@@ -34,8 +27,9 @@ class QuantumInspireJob:
         The QuantumInspire Job class encapsulates the base job of the API and has
         methods to check the status and retrieve the results from the API.
 
-        :param api: An instance to the API.
-        :param job_identifier: The job identification number.
+        Args:
+            api: An instance to the API.
+            job_identifier: The job identification number.
         """
         QuantumInspireJob.__check_arguments(api, job_identifier)
         self.__job_identifier: int = job_identifier
@@ -45,11 +39,13 @@ class QuantumInspireJob:
     def __check_arguments(api: Any, job_identifier: int) -> None:
         """ Checks whether the supplied arguments are of correct type.
 
-        :param api: An instance to the API.
-        :param job_identifier: The job identification number.
+        Args:
+            api: An instance to the API.
+            job_identifier: The job identification number.
 
-        :raises ValueError: When the api is not a QuantumInspireApi or when the
-            job identifier is not found.
+        Raises:
+            ValueError: When the api is not a QuantumInspireApi or when the
+                job identifier is not found.
         """
         if type(api).__name__ != 'QuantumInspireAPI':
             raise ValueError('Invalid Quantum Inspire API!')
@@ -61,8 +57,9 @@ class QuantumInspireJob:
     def check_status(self) -> str:
         """ Checks the execution status of the job.
 
-        :return:
-            The status of the job. Can be: 'NEW', 'RUNNING', 'COMPLETE', 'CANCELLED'
+        Returns:
+            The status of the job.
+            Can be: 'NEW', 'RUNNING', 'COMPLETE', 'CANCELLED'
         """
         job = self.__api.get_job(self.__job_identifier)
         return str(job['status'])
@@ -70,7 +67,7 @@ class QuantumInspireJob:
     def retrieve_results(self) -> Dict[str, Any]:
         """ Gets the results of the job.
 
-        :return:
+        Returns:
             The execution results with a histogram item containing the result
             histogram of the job. When an error has occurred the raw_text item shall not be
             an empty string.
@@ -81,7 +78,7 @@ class QuantumInspireJob:
     def get_job_identifier(self) -> int:
         """ Gets the set job identification number for the wrapped job.
 
-        :return:
+        Returns:
             The job identification number.
         """
         return self.__job_identifier
@@ -89,7 +86,7 @@ class QuantumInspireJob:
     def get_project_identifier(self) -> int:
         """ Gets the project identification number of the wrapped job.
 
-        :return:
+        Returns:
             The project identification number.
         """
         asset = self.__api.get_asset_from_job(self.__job_identifier)

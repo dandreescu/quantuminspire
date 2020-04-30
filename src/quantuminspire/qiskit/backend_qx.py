@@ -60,31 +60,33 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
                  configuration: Optional[QasmBackendConfiguration] = None) -> None:
         """ Python implementation of a quantum simulator using Quantum Inspire API.
 
-        :param api: The interface instance to the Quantum Inspire API.
-        :param provider: Provider for this backend.
-        :param configuration: The configuration of the quantum inspire backend. The
-                configuration must implement the fields given by the QiSimulatorPy.DEFAULT_CONFIGURATION. All
-                configuration fields are listed in the table below. The table rows with an asterisk specify fields which
-                can have a custom value and are allowed to be changed according to the description column.
+        Args:
+            api: The interface instance to the Quantum Inspire API.
+            provider: Provider for this backend.
+            configuration: The configuration of the quantum inspire backend.
 
-                =============== ========== ============================================================================
-                Key             Type       Description
-                =============== ========== ============================================================================
-                backend_name *  str        The name of the quantum inspire backend. The API can list the name of each
-                                           available backend using the function api.list_backend_types(). One of the
-                                           listed names must be used.
-                backend_version str        Backend version in the form X.Y.Z.
-                n_qubits        int        Number of qubits.
-                basis_gates     list[str]  A list of basis gates to compile to.
-                gates           GateConfig List of basis gates on the backend. Not used.
-                local           bool       Indicates whether the system is running locally or remotely. Not used.
-                simulator       bool       Specifies whether the backend is a simulator or a quantum system. Not used.
-                conditional     bool       Backend supports conditional operations.
-                open_pulse      bool       Backend supports open pulse. False.
-                memory          bool       Backend supports memory. True.
-                max_shots       int        Maximum number of shots supported.
-                max_experiments int        Optional: Maximum number of experiments (circuits) per job.
-                =============== ========== ============================================================================
+        The `configuration` must implement the fields given by the QiSimulatorPy.DEFAULT_CONFIGURATION. All
+        configuration fields are listed in the table below. The table rows with an asterisk specify fields which
+        can have a custom value and are allowed to be changed according to the description column.
+
+        =============== ========== ============================================================================
+        Key             Type       Description
+        =============== ========== ============================================================================
+        backend_name *  str        The name of the quantum inspire backend. The API can list the name of each
+                                   available backend using the function api.list_backend_types(). One of the
+                                   listed names must be used.
+        backend_version str        Backend version in the form X.Y.Z.
+        n_qubits        int        Number of qubits.
+        basis_gates     list[str]  A list of basis gates to compile to.
+        gates           GateConfig List of basis gates on the backend. Not used.
+        local           bool       Indicates whether the system is running locally or remotely. Not used.
+        simulator       bool       Specifies whether the backend is a simulator or a quantum system. Not used.
+        conditional     bool       Backend supports conditional operations.
+        open_pulse      bool       Backend supports open pulse. False.
+        memory          bool       Backend supports memory. True.
+        max_shots       int        Maximum number of shots supported.
+        max_experiments int        Optional: Maximum number of experiments (circuits) per job.
+        =============== ========== ============================================================================
 
         """
         super().__init__(configuration=(configuration or
@@ -100,9 +102,10 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def run(self, qobj: QasmQobj) -> QIJob:
         """ Submits a quantum job to the Quantum Inspire platform.
 
-        :param qobj: The quantum job with the Qiskit algorithm and quantum inspire backend.
+        Args:
+            qobj: The quantum job with the Qiskit algorithm and quantum inspire backend.
 
-        :return:
+        Returns:
             A job that has been submitted.
         """
         self.__validate_number_of_shots(qobj)
@@ -127,12 +130,14 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def retrieve_job(self, job_id: str) -> QIJob:
         """ Retrieve a specified job by its job_id.
 
-        :param job_id: The job id.
+        Args:
+            job_id: The job id.
 
-        :return:
+        Returns:
             The job that has been retrieved.
 
-        :raises QisKitBackendError: If job not found or error occurs during retrieval of the job.
+        Raises:
+            QisKitBackendError: If job not found or error occurs during retrieval of the job.
         """
         try:
             self.__api.get_project(int(job_id))
@@ -144,10 +149,11 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def _generate_cqasm(experiment: QasmQobjExperiment, full_state_projection: bool = True) -> str:
         """ Generates the cQASM from the Qiskit experiment.
 
-        :param experiment: The experiment that contains instructions to be converted to cQASM.
-        :param full_state_projection: When False, the experiment is not suitable for full state projection
+        Args:
+            experiment: The experiment that contains instructions to be converted to cQASM.
+            full_state_projection: When False, the experiment is not suitable for full state projection
 
-        :return:
+        Returns:
             The cQASM code that can be sent to the Quantum Inspire API.
         """
         parser = CircuitToString(full_state_projection)
@@ -177,11 +183,13 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def get_experiment_results(self, qi_job: QIJob) -> List[ExperimentResult]:
         """ Get results from experiments from the Quantum-inspire platform.
 
-        :param qi_job: A job that has already been submitted and which execution is completed.
+        Args:
+            qi_job: A job that has already been submitted and which execution is completed.
 
-        :raises QisKitBackendError: If an error occurred during execution by the backend.
+        Raises:
+            QisKitBackendError: If an error occurred during execution by the backend.
 
-        :return:
+        Returns:
             A list of experiment results; containing the data, execution time, status, etc.
         """
         jobs = self.__api.get_jobs_from_project(int(qi_job.job_id()))
@@ -210,9 +218,11 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def __validate_number_of_shots(job: QasmQobj) -> None:
         """ Checks whether the number of shots has a valid value.
 
-        :param job: The quantum job with the Qiskit algorithm and quantum inspire backend.
+        Args:
+            job: The quantum job with the Qiskit algorithm and quantum inspire backend.
 
-        :raises QisKitBackendError: When the value is not correct.
+        Raises:
+            QisKitBackendError: When the value is not correct.
         """
         number_of_shots = job.config.shots
         if number_of_shots < 1:
@@ -239,9 +249,11 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
             Because cQASM has the same number of classical registers as qubits (2 in this case),
             this circuit cannot be translated to valid cQASM.
 
-        :param experiment: The experiment with gate operations and header.
+        Args:
+            experiment: The experiment with gate operations and header.
 
-        :raises QisKitBackendError: When the value is not correct.
+        Raises:
+            QisKitBackendError: When the value is not correct.
         """
         number_of_clbits = experiment.header.memory_slots
         if number_of_clbits < 1:
@@ -263,9 +275,10 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
         FSP (Full State Projection) can be used when no measurements are found in the circuit or when no
         other gates are found after measurements.
 
-        :param experiment: The experiment with gate operations and header.
+        Args:
+            experiment: The experiment with gate operations and header.
 
-        :return:
+        Returns:
             True when FSP can be used, otherwise False.
         """
         fsp = True
@@ -288,9 +301,11 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
             1. When a quantum register is measured to different classical registers
             2. When a classical register is used for the measurement of more than one quantum register
 
-        :param experiment: The experiment with gate operations and header.
+        Args:
+            experiment: The experiment with gate operations and header.
 
-        :raises QisKitBackendError: When the circuit contains an invalid non-FSP measurement
+        Raises:
+            QisKitBackendError: When the circuit contains an invalid non-FSP measurement
         """
         measurements: List[List[int]] = []
         for instruction in experiment.instructions:
@@ -311,9 +326,10 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
         The full-state measured
         qubits is returned when no measurements are present in the compiled circuit.
 
-        :param experiment: The experiment with gate operations and header.
+        Args:
+            experiment: The experiment with gate operations and header.
 
-        :return:
+        Returns:
             The dict contains measurements, which is a list of lists, for each measurement the list contains
             a list of [qubit_index, classical_bit_index], which represents the measurement of a qubit to a
             classical bit, and the second field in the dict is the number of classical bits (int).
@@ -334,12 +350,13 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
     def __qubit_to_classical_hex(qubit_register: str, measurements: Dict[str, Any], number_of_qubits: int) -> str:
         """ This function converts the qubit register data to the hexadecimal representation of the classical state.
 
-        :param qubit_register: The measured value of the qubits represented as int.
-        :param measurements: The dictionary contains a measured qubits/classical bits map (list) and the
+        Args:
+            qubit_register: The measured value of the qubits represented as int.
+            measurements: The dictionary contains a measured qubits/classical bits map (list) and the
                           number of classical bits (int).
-        :param number_of_qubits: Number of qubits used in the algorithm.
+            number_of_qubits: Number of qubits used in the algorithm.
 
-        :return:
+        Returns:
             The hexadecimal value of the classical state.
         """
         qubit_state = ('{0:0{1}b}'.format(int(qubit_register), number_of_qubits))
@@ -359,12 +376,13 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
         converts the result to a histogram output that represents the probabilities
         measured with the classical bits.
 
-        :param result: The result output from the quantum inspire backend with full-
+        Args:
+            result: The result output from the quantum inspire backend with full-
                     state projection histogram output.
-        :param measurements: The dictionary contains a measured qubits/classical bits map (list) and the
+            measurements: The dictionary contains a measured qubits/classical bits map (list) and the
                           number of classical bits (int).
 
-        :return:
+        Returns:
             The resulting full state histogram with probabilities.
         """
         output_histogram_probabilities: Dict[str, float] = defaultdict(lambda: 0)
@@ -381,7 +399,7 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
         return Obj.from_dict(full_state_histogram_obj)
 
     def __convert_result_data(self, result: Dict[str, Any], measurements: Dict[str, Any]) -> Tuple[Obj, List[str]]:
-        """Conver result data
+        """Convert result data
 
         The quantum inspire backend returns the single shot values as raw data. This function
         converts this list of single shot values to hexadecimal memory data according the Qiskit spec.
@@ -407,12 +425,13 @@ class QuantumInspireBackend(BaseBackend):  # type: ignore
 
                 When random is in the range [0.7, 1) the last value of the probability histogram is taken (0x6).
 
-        :param result: The result output from the quantum inspire backend with full-
+        Args:
+            result: The result output from the quantum inspire backend with full-
                     state projection histogram output.
-        :param measurements: The dictionary contains a measured qubits/classical bits map (list) and the
+            measurements: The dictionary contains a measured qubits/classical bits map (list) and the
                           number of classical bits (int).
 
-        :return:
+        Returns:
             The result consists of two formats for the result. The first result is the histogram with count data,
             the second result is a list with converted hexadecimal memory values for each shot.
         """

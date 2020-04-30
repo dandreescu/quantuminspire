@@ -192,3 +192,45 @@ the package `tests` installed by older versions of `marshmallow-polyfield` (a Qi
 dependency):
 
 `rm -Rf env/lib/python3.6/site-packages/tests`
+
+
+## Developer notes
+
+### Install in editable mode
+
+To work on the source code for this SDK, first clone the repository from GitHub:
+
+```
+$ cd <your-working-directory>
+$ git clone https://github.com/QuTech-Delft/quantuminspire
+```
+
+Note: It is advisable to work in a virtual environment.
+
+After the software has been cloned, ``cd`` into the ``quantuminspire`` directory
+and install the project in editable mode
+
+```
+$ cd quantuminspire
+$ pip install -e .[projectq,qiskit]
+```
+
+### Documentation
+
+If you need to work on the documentation, or just want to build the documentation,
+you should install the project with:
+
+```
+$ cd quantuminspire
+$ pip install -e .[rtd,projectq,qiskit]
+```
+
+When this is done, building the documentation can be done as follows:
+
+```
+$ cd quantuminspire/docs
+$ make html
+```
+
+The generated documentation is available in the ``build`` directory under ``docs``.
+Open the file ``index.html`` in your browser to see the documentation

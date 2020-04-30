@@ -14,14 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Module api
-==========
-
-.. autoclass:: QuantumInspireAPI
-   :members:
-"""
-
 import re
 import itertools
 import logging
@@ -66,9 +58,10 @@ class QuantumInspireAPI:
         The REST API can be found on: https://api.quantum-inspire.com/
         The Core API schema is published on: https://api.quantum-inspire.com/schema/
 
-        :param base_uri: The base uri of the Quantum Inspire API-location where the schema can be found
+        Args:
+            base_uri: The base uri of the Quantum Inspire API-location where the schema can be found
                 in path 'schema/').
-        :param authentication: The authentication, can be one of the following :mod:`coreapi` authentications:
+            authentication: The authentication, can be one of the following :mod:`coreapi` authentications:
 
                  * :class:`~coreapi.auth.BasicAuthentication(email, password)`,
                    HTTP authentication with valid email/password.
@@ -76,13 +69,14 @@ class QuantumInspireAPI:
                    token authentication with a valid API-token.
 
                 When authentication is :obj:`None`, a token is read from the default location.
-        :param project_name: The name of the project used for executing the jobs.
-        :param coreapi_client_class: Coreapi client to interact with the API through a schema.
+            project_name: The name of the project used for executing the jobs.
+            coreapi_client_class: Coreapi client to interact with the API through a schema.
                 Default set to :class:`coreapi.Client`.
 
-        :raises AuthenticationError: When no authentication is given
+        Raises:
+            AuthenticationError: When no authentication is given
                 and the token could not be loaded from the default location.
-        :raises ApiError: When the schema could not be loaded.
+            ApiError: When the schema could not be loaded.
 
         .. note::
             When no project name is given, a temporary project is created for the job and deleted after the job
@@ -111,17 +105,20 @@ class QuantumInspireAPI:
 
         The information requested depends on the uri_path parameter.
 
-        :param uri_path: The URL where to request the data.
+        Args:
+            uri_path: The URL where to request the data.
 
-        :raises TypeError: When the uri_path is not correct.
-        :raises CoreAPIException: When the get was not successful. Possible causes are:
+        Raises:
+            TypeError: When the uri_path is not correct.
+            CoreAPIException: When the get was not successful. Possible causes are:
 
-            * The schema is not loaded, or
-            * A network error occurred.
+                * The schema is not loaded, or
+                * A network error occurred.
 
-        :raises ErrorMessage: When the result of the get is not successful.
+            ErrorMessage: When the result of the get is not successful.
 
-        :return: The resulting data from the get-request. The structure of the data depends on the request.
+        Returns:
+            The resulting data from the get-request. The structure of the data depends on the request.
 
         .. note:
             This method will be made private in the near future. Usage is discouraged.
@@ -132,7 +129,8 @@ class QuantumInspireAPI:
     def show_fsp_warning(self, enable: bool = True) -> None:
         """ Enable or disable the warning that is printed when a non-FSP (full state projection) job is about to run.
 
-        :param enable: when True the fsp-warning is shown, otherwise not.
+        Args:
+            enable: when True the fsp-warning is shown, otherwise not.
 
         """
         self.enable_fsp_warning = enable
@@ -140,18 +138,21 @@ class QuantumInspireAPI:
     def _action(self, action: List[str], params: Optional[Dict[str, Any]] = None) -> Any:
         """ Adapter for performing an action on an object via the Quantum Inspire API.
 
-        :param action: Path in the schema hierarchy selecting the requested action.
-        :param params: Some actions may accept a set of parameters with names as keys.
+        Args:
+            action: Path in the schema hierarchy selecting the requested action.
+            params: Some actions may accept a set of parameters with names as keys.
 
-        :raises CoreAPIException: When the action was not successful. Possible causes are:
+        Raises:
+            CoreAPIException: When the action was not successful. Possible causes are:
 
-            * One of the actions or parameters not supported,
-            * the schema is not loaded, or
-            * a network error occurred.
+                * One of the actions or parameters not supported,
+                * the schema is not loaded, or
+                * a network error occurred.
 
-        :raises CoreAPIException.ErrorMessage: When the result of the action is not successful.
+            CoreAPIException.ErrorMessage: When the result of the action is not successful.
 
-        :return: The resulting data from the action-request. The structure of the data depends on the request.
+        Returns:
+            The resulting data from the action-request. The structure of the data depends on the request.
             Can be None when there is no content in the response.
         """
         return self.__client.action(self.document, action, params=params)
@@ -169,35 +170,38 @@ class QuantumInspireAPI:
     def get_default_backend_type(self) -> Dict[str, Any]:
         """ Gets the properties of the default backend type.
 
-        :return: The default backend type with all of its properties:
+        Returns:
+            The default backend type with all of its properties.
 
-            =================================== =========== ============================================================
-            Key                                 Type        Description
-            =================================== =========== ============================================================
-            ``url``                             str         The url for the backend type.
-            ``name``                            str         Name of the backend.
-            ``is_hardware_backend``             bool        Indicates whether the backend is a hardware backend (True)
-                                                            or a simulating backend (False).
-            ``required_permission``             str         Describes the permission that is required
-                                                            to use this backend.
-            ``number_of_qubits``                int         Maximum number of qubits the backend supports.
-            ``description``                     str         Short description of the backend.
-            ``topology``                        OrderedDict Dictionary with property `edges` that contains a list of
-                                                            tuples that define qubit connectivity for 2-qubit gates.
-            ``is_allowed``                      bool        Indicates whether the user is allowed to use this backend.
-            ``status``                          str         Status of the backend.
-            ``status_message``                  str         Extra info about the status of the backend.
-            ``chip_image_id``                   str         Unique identification of the chip.
-            ``calibration``                     str         Calibration information (url).
-            ``allowed_operations``              dict        The gates/operations names that the backend can handle.
-            ``default_number_of_shots``         int         The default number of shots for an experiment.
-            ``max_number_of_shots``             int         The maximum number of shots for an experiment.
-            ``max_number_of_simultaneous_jobs`` int         The maximum number of jobs that is allowed to be queued for
-                                                            the backend simultaneously (0 = no limit).
-            ``operations_count``                dict        The maximum number of gates that is allowed in an experiment
-                                                            for each qubit separately and for the experiment in total
-                                                            (0 = no limit).
-            =================================== =========== ============================================================
+        The following table shows the properties of the backend:
+
+        =================================== =========== ============================================================
+        Key                                 Type        Description
+        =================================== =========== ============================================================
+        ``url``                             str         The url for the backend type.
+        ``name``                            str         Name of the backend.
+        ``is_hardware_backend``             bool        Indicates whether the backend is a hardware backend (True)
+                                                        or a simulating backend (False).
+        ``required_permission``             str         Describes the permission that is required
+                                                        to use this backend.
+        ``number_of_qubits``                int         Maximum number of qubits the backend supports.
+        ``description``                     str         Short description of the backend.
+        ``topology``                        OrderedDict Dictionary with property `edges` that contains a list of
+                                                        tuples that define qubit connectivity for 2-qubit gates.
+        ``is_allowed``                      bool        Indicates whether the user is allowed to use this backend.
+        ``status``                          str         Status of the backend.
+        ``status_message``                  str         Extra info about the status of the backend.
+        ``chip_image_id``                   str         Unique identification of the chip.
+        ``calibration``                     str         Calibration information (url).
+        ``allowed_operations``              dict        The gates/operations names that the backend can handle.
+        ``default_number_of_shots``         int         The default number of shots for an experiment.
+        ``max_number_of_shots``             int         The maximum number of shots for an experiment.
+        ``max_number_of_simultaneous_jobs`` int         The maximum number of jobs that is allowed to be queued for
+                                                        the backend simultaneously (0 = no limit).
+        ``operations_count``                dict        The maximum number of gates that is allowed in an experiment
+                                                        for each qubit separately and for the experiment in total
+                                                        (0 = no limit).
+        =================================== =========== ============================================================
 
         """
         return OrderedDict(self._action(['backendtypes', 'default', 'list']))
@@ -205,7 +209,7 @@ class QuantumInspireAPI:
     def get_backend_types(self) -> List[Dict[str, Any]]:
         """ Gets a list of backend types with properties.
 
-        :return:
+        Returns:
             A list of backend types with all of their properties.
             See :meth:`~.get_default_backend_type`
             for a description of the backend properties.
@@ -216,11 +220,13 @@ class QuantumInspireAPI:
     def get_backend_type_by_id(self, backend_type_id: int) -> Dict[str, Any]:
         """ Gets the properties of a specific backend type, given the backend type id.
 
-        :param backend_type_id: The backend identification number.
+        Args:
+            backend_type_id: The backend identification number.
 
-        :raises ApiError: When the backend type indicated by backend_type_id does not exist.
+        Raises:
+            ApiError: When the backend type indicated by backend_type_id does not exist.
 
-        :return:
+        Returns:
             The requested backend type indicated by backend_type_id with all of its properties.
             See :meth:`~.get_default_backend_type`
             for a description of the backend type properties.
@@ -234,11 +240,13 @@ class QuantumInspireAPI:
     def get_backend_type_by_name(self, backend_name: str) -> Dict[str, Any]:
         """ Gets the properties of a backend type, given the backend name (case insensitive).
 
-        :param backend_name: The backend name.
+        Args:
+            backend_name: The backend name.
 
-        :raises ApiError: When the backend name does not exist.
+        Raises:
+            ApiError: When the backend name does not exist.
 
-        :return:
+        Returns:
             The properties of the backend type of the specific backend.
             See :meth:`~.get_default_backend_type`
             for a description of the backend type properties.
@@ -257,12 +265,14 @@ class QuantumInspireAPI:
         of type :class:`string` or :class:`int`,
         the backend type will be searched by name or id respectively.
 
-        :param identifier: The backend type identifier.
+        Args:
+            identifier: The backend type identifier.
 
-        :raises ApiError: If the requested backend type does not exist.
-        :raises ValueError: If the backend type identifier is not of the correct type.
+        Raises:
+            ApiError: If the requested backend type does not exist.
+            ValueError: If the backend type identifier is not of the correct type.
 
-        :return:
+        Returns:
             This method returns the default backend type or the backend type as identified by
             the `identifier` parameter , or the default backend type if no `identifier` is provided.
             See :meth:`~.get_default_backend_type`
@@ -292,26 +302,31 @@ class QuantumInspireAPI:
     def get_project(self, project_id: int) -> Dict[str, Any]:
         """ Gets the properties of a project, given the project id.
 
-        :param project_id: The project identification number.
+        Args:
+            project_id: The project identification number.
 
-        :raises ApiError: If the requested project does not exist.
+        Raises:
+            ApiError: If the requested project does not exist.
 
-        :return: The properties describing the project:
+        Returns:
+            The properties describing the project.
 
-            =========================== =========== ==============================================================
-            Key                         Type        Description
-            =========================== =========== ==============================================================
-            ``url``                     str         The url for this project.
-            ``id``                      int         Unique id of the project.
-            ``name``                    str         Name of the project.
-            ``owner``                   int         Url to get the owner of the project.
-            ``assets``                  str         Url to get the assets of the project.
-            ``backend_type``            str         Url to get the backend type of the project.
-            ``default_number_of_shots`` int         Default number of executions for this project.
-            ``created``                 str         Date/time when the project was created.
-            ``number_of_jobs``          int         Number of jobs managed within this project.
-            ``last_saved``              str         Date/time when the project was saved.
-            =========================== =========== ==============================================================
+        The following table shows the properties of the project:
+
+        =========================== =========== ==============================================================
+        Key                         Type        Description
+        =========================== =========== ==============================================================
+        ``url``                     str         The url for this project.
+        ``id``                      int         Unique id of the project.
+        ``name``                    str         Name of the project.
+        ``owner``                   int         Url to get the owner of the project.
+        ``assets``                  str         Url to get the assets of the project.
+        ``backend_type``            str         Url to get the backend type of the project.
+        ``default_number_of_shots`` int         Default number of executions for this project.
+        ``created``                 str         Date/time when the project was created.
+        ``number_of_jobs``          int         Number of jobs managed within this project.
+        ``last_saved``              str         Date/time when the project was saved.
+        =========================== =========== ==============================================================
 
         """
         try:
@@ -323,7 +338,7 @@ class QuantumInspireAPI:
     def get_projects(self) -> List[Dict[str, Any]]:
         """ Gets all the projects registered to the user the API is currently authenticated for.
 
-        :return:
+        Returns:
             The projects with all of their properties.
             See :meth:`~.get_project` for a description of the project properties.
         """
@@ -333,12 +348,13 @@ class QuantumInspireAPI:
     def create_project(self, name: str, default_number_of_shots: int, backend_type: Dict[str, Any]) -> Dict[str, Any]:
         """ Creates a new project for executing cQASM code.
 
-        :param name: The name for the project. The name need not be unique.
-        :param default_number_of_shots: The default number of executions of the program before collecting
-            the results.
-        :param backend_type: The properties of the backend type.
+        Args:
+            name: The name for the project. The name need not be unique.
+            default_number_of_shots: The default number of executions of the program before collecting
+                the results.
+            backend_type: The properties of the backend type.
 
-        :return:
+        Returns:
             The newly created project with all of its properties.
             See :meth:`~.get_project` for a description of the project properties.
         """
@@ -355,9 +371,11 @@ class QuantumInspireAPI:
         Deletes the project identified by `project_id` together with all its assets, jobs and results.
         Only projects can be deleted that are registered for the user the API is currently authenticated for.
 
-        :param project_id: The project identification number.
+        Args:
+            project_id: The project identification number.
 
-        :raises ApiError: If the project identified by project_id does not exist.
+        Raises:
+            ApiError: If the project identified by project_id does not exist.
         """
         payload = {
             'id': project_id
@@ -382,34 +400,39 @@ class QuantumInspireAPI:
     def get_job(self, job_id: int) -> Dict[str, Any]:
         """ Gets the properties of a job, given the job id.
 
-        :param job_id: The job identification number.
+        Args:
+            job_id: The job identification number.
 
-        :raises ApiError: If the requested job does not exist.
+        Raises:
+            ApiError: If the requested job does not exist.
 
-        :return: The properties describing the job:
+        Returns:
+            The properties describing the job.
 
-            ========================= =========== ==================================================================
-            Key                       Type        Description
-            ========================= =========== ==================================================================
-            ``url``                   str         The url for the job.
-            ``name``                  str         Name of the circuit that is executed by this job.
-            ``id``                    int         Unique id of the job.
-            ``status``                str         Execution status of the job:
-                                                  e.g. 'NEW', 'COMPLETE', 'CANCELLED', 'RUNNING'.
-            ``input``                 str         Url to get the assets of the job.
-            ``backend``               str         Url to get the backend the job is executed on.
-            ``backend_type``          str         Url to get the backend type of the backend
-                                                  the job is executed on.
-            ``results``               str         Url to get the results for the job.
-            ``queued_at``             str         The date-time the job is queued at.
-                                                  The format is 'yyyy-MM-ddTHH:mm:ss.SSSSSSZ' Zulu Time.
-            ``number_of_shots``       int         Number of executions for this job.
-            ``full_state_projection`` bool        Indicates if the backend uses full state projection
-                                                  to determine the quantum state.
-                                                  Used for optimizing simulations. For more information see:
-                                                  https://www.quantum-inspire.com/kbase/optimization-of-simulations/
-            ``user_data``             str         The user configuration data.
-            ========================= =========== ==================================================================
+        The following table shows the properties of the job:
+
+        ========================= =========== ==================================================================
+        Key                       Type        Description
+        ========================= =========== ==================================================================
+        ``url``                   str         The url for the job.
+        ``name``                  str         Name of the circuit that is executed by this job.
+        ``id``                    int         Unique id of the job.
+        ``status``                str         Execution status of the job:
+                                              e.g. 'NEW', 'COMPLETE', 'CANCELLED', 'RUNNING'.
+        ``input``                 str         Url to get the assets of the job.
+        ``backend``               str         Url to get the backend the job is executed on.
+        ``backend_type``          str         Url to get the backend type of the backend
+                                              the job is executed on.
+        ``results``               str         Url to get the results for the job.
+        ``queued_at``             str         The date-time the job is queued at.
+                                              The format is 'yyyy-MM-ddTHH:mm:ss.SSSSSSZ' Zulu Time.
+        ``number_of_shots``       int         Number of executions for this job.
+        ``full_state_projection`` bool        Indicates if the backend uses full state projection
+                                              to determine the quantum state.
+                                              Used for optimizing simulations. For more information see:
+                                              https://www.quantum-inspire.com/kbase/optimization-of-simulations/
+        ``user_data``             str         The user configuration data.
+        ========================= =========== ==================================================================
 
         """
         try:
@@ -421,7 +444,7 @@ class QuantumInspireAPI:
     def get_jobs(self) -> List[Dict[str, Any]]:
         """ Gets all the jobs registered to projects for the user the API is currently authenticated for.
 
-        :return:
+        Returns:
             The jobs with all of its properties.
             See :meth:`~.get_job` for a description of the job properties.
         """
@@ -431,13 +454,15 @@ class QuantumInspireAPI:
     def get_jobs_from_asset(self, asset_id: int) -> List[Dict[str, Any]]:
         """ Gets the jobs with its properties for an asset, given the asset id.
 
-        :param asset_id: The asset identification number.
+        Args:
+            asset_id: The asset identification number.
 
-        :return:
+        Returns:
             List of jobs with its properties for the asset with identification `asset_id`.
             An empty list is returned when the asset has no jobs.
 
-        :raises ApiError: If the asset identified by `asset_id` does not exist.
+        Raises:
+            ApiError: If the asset identified by `asset_id` does not exist.
         """
         try:
             jobs = self._action(['assets', 'jobs', 'list'], params={'id': asset_id})
@@ -449,13 +474,15 @@ class QuantumInspireAPI:
     def get_jobs_from_project(self, project_id: int) -> List[Dict[str, Any]]:
         """ Gets the jobs with its properties for a single project, given the project id.
 
-        :param project_id: The project identification number.
+        Args:
+            project_id: The project identification number.
 
-        :return:
+        Returns:
             List of jobs with its properties for the project with identification `project_id`.
             An empty list is returned when the project has no jobs.
 
-        :raises ApiError: If the project identified by `project_id` does not exist.
+        Raises:
+            ApiError: If the project identified by `project_id` does not exist.
         """
         try:
             jobs = self._action(['projects', 'jobs', 'list'], params={'id': project_id})
@@ -469,13 +496,15 @@ class QuantumInspireAPI:
 
         Only jobs can be deleted that are registered for the user the API is currently authenticated for.
 
-        :param job_id: The job identification number.
+        Args:
+            job_id: The job identification number.
 
-        :return:
+        Returns:
             The deleted job indicated by the job identification number.
             See :meth:`~.get_job` for a description of the job properties.
 
-        :raises ApiError: If the job identified by `job_id` does not exist.
+        Raises:
+            ApiError: If the job identified by `job_id` does not exist.
         """
         try:
             return OrderedDict(self._action(['jobs', 'delete'], params={'id': job_id}))
@@ -489,15 +518,17 @@ class QuantumInspireAPI:
 
         This method is used by execute_qasm_async and indirectly by execute_qasm.
 
-        :param name: The name for the job.
-        :param asset:  The asset with the cQASM code.
-        :param project: The project with backend type.
-        :param number_of_shots: The number of executions before returning the result.
-        :param full_state_projection: Used for optimizing simulations. For more information see:
-            https://www.quantum-inspire.com/kbase/optimization-of-simulations/
-        :param user_data: Data that the user wants to pass along with the job.
+        Args:
+            name: The name for the job.
+            asset:  The asset with the cQASM code.
+            project: The project with backend type.
+            number_of_shots: The number of executions before returning the result.
+            backend_type: The backend type
+            full_state_projection: Used for optimizing simulations. For more information see:
+                https://www.quantum-inspire.com/kbase/optimization-of-simulations/
+            user_data: Data that the user wants to pass along with the job.
 
-        :return:
+        Returns:
             The properties describing the new job.
             See :meth:`~.get_job` for a description of the job properties.
         """
@@ -533,35 +564,39 @@ class QuantumInspireAPI:
     def get_result(self, result_id: int) -> Dict[str, Any]:
         """ Gets the histogram results of the executed cQASM code, given the result_id.
 
-        :param result_id: The result identification number.
+        Args:
+            result_id: The result identification number.
 
-        :raises ApiError: If the requested result does not exist.
+        Raises:
+            ApiError: If the requested result does not exist.
 
-        :return:
-            The properties describing the result:
+        Returns:
+            The properties describing the result.
 
-            ============================= =========== ==================================================================
-            Key                           Type        Description
-            ============================= =========== ==================================================================
-            ``id``                        int         Unique id of the result.
-            ``url``                       str         The url to get this result.
-            ``job``                       str         The url to get the job that generated the result.
-            ``created_at``                str         The date-time the result is created at.
-                                                      The format is 'yyyy-MM-ddTHH:mm:ss.SSSSSSZ' Zulu Time.
-            ``number_of_qubits``          int         Number of qubits in the circuit for this experiment.
-            ``execution_time_in_seconds`` float       The execution time of the job.
-            ``raw_text``                  str         Text string filled when an error occurred, else empty.
-            ``raw_data_url``              str         Url to get the raw data of the result. The raw data exists of a
-                                                      list of integer values depicting the state for each shot.
-            ``histogram``                 OrderedDict The histogram as a list of tuples with state (str) and
-                                                      its probability (float).
-            ``histogram_url``             str         Url to get the histogram with probabilities. This results in the
-                                                      OrderedDict as found in property ``histogram`` of result.
-            ``measurement_mask``          int         (deprecated, unused) The measurement mask.
-            ``quantum_states_url``        str         Url to get a list of quantum states.
-            ``measurement_register_url``  str         Url to get a list of measurement register.
-            ``calibration``               str         Url to get calibration information.
-            ============================= =========== ==================================================================
+        The following table shows the properties of the result:
+
+        ============================= =========== ==================================================================
+        Key                           Type        Description
+        ============================= =========== ==================================================================
+        ``id``                        int         Unique id of the result.
+        ``url``                       str         The url to get this result.
+        ``job``                       str         The url to get the job that generated the result.
+        ``created_at``                str         The date-time the result is created at.
+                                                  The format is 'yyyy-MM-ddTHH:mm:ss.SSSSSSZ' Zulu Time.
+        ``number_of_qubits``          int         Number of qubits in the circuit for this experiment.
+        ``execution_time_in_seconds`` float       The execution time of the job.
+        ``raw_text``                  str         Text string filled when an error occurred, else empty.
+        ``raw_data_url``              str         Url to get the raw data of the result. The raw data exists of a
+                                                  list of integer values depicting the state for each shot.
+        ``histogram``                 OrderedDict The histogram as a list of tuples with state (str) and
+                                                  its probability (float).
+        ``histogram_url``             str         Url to get the histogram with probabilities. This results in the
+                                                  OrderedDict as found in property ``histogram`` of result.
+        ``measurement_mask``          int         (deprecated, unused) The measurement mask.
+        ``quantum_states_url``        str         Url to get a list of quantum states.
+        ``measurement_register_url``  str         Url to get a list of measurement register.
+        ``calibration``               str         Url to get calibration information.
+        ============================= =========== ==================================================================
         """
         try:
             result = self._action(['results', 'read'], params={'id': result_id})
@@ -572,7 +607,7 @@ class QuantumInspireAPI:
     def get_results(self) -> List[Dict[str, Any]]:
         """ Gets all the results registered for the user the API is currently authenticated for.
 
-        :return:
+        Returns:
             The results with all of its properties.
             See :meth:`~.get_result` for a description of the result properties.
         """
@@ -582,13 +617,15 @@ class QuantumInspireAPI:
     def get_result_from_job(self, job_id: int) -> Dict[str, Any]:
         """ Gets the result with its properties for a single job, given the job id.
 
-        :param job_id: The job identification number.
+        Args:
+            job_id: The job identification number.
 
-        :return:
+        Returns:
             The result with its properties for the job with identification `job_id`.
             See :meth:`~.get_result` for a description of the result properties.
 
-        :raises ApiError: If the job identified by `job_id` does not exist.
+        Raises:
+            ApiError: If the job identified by `job_id` does not exist.
         """
         try:
             result = self._action(['jobs', 'result', 'list'], params={'id': job_id})
@@ -602,12 +639,14 @@ class QuantumInspireAPI:
         Gets the raw data from the result of the executed cQASM code, given the result_id.
         The raw data consists of a list with integer state values for each shot of the experiment (see job.number_of_shots).
 
-        :param result_id: The identification number of the result.
+        Args:
+            result_id: The identification number of the result.
 
-        :raises ApiError: If the raw data url in result is invalid
-            or the request for the raw data using the url failed.
+        Raises:
+            ApiError: If the raw data url in result is invalid
+                or the request for the raw data using the url failed.
 
-        :return:
+        Returns:
             The raw data as a list of integer values. An empty list is returned when there is no raw data.
         """
         result = self.get_result(result_id)
@@ -626,12 +665,14 @@ class QuantumInspireAPI:
     def get_quantum_states_from_result(self, result_id: int) -> List[Any]:
         """ Gets the quantum states from the result of the executed cQASM code, given the result_id.
 
-        :param result_id: The identification number of the result.
+        Args:
+            result_id: The identification number of the result.
 
-        :raises ApiError: If the quantum states url in result is invalid or the request
-            for the quantum states using the url failed.
+        Raises:
+            ApiError: If the quantum states url in result is invalid or the request
+                for the quantum states using the url failed.
 
-        :return:
+        Returns:
             The quantum states consists of a list of quantum state values.
             An empty list is returned when there is no data.
         """
@@ -651,12 +692,14 @@ class QuantumInspireAPI:
     def get_measurement_register_from_result(self, result_id: int) -> List[Any]:
         """ Gets the measurement register from the result of the executed cQASM code, given the result_id.
 
-        :param result_id: The identification number of the result.
+        Args:
+            result_id: The identification number of the result.
 
-        :raises ApiError: If the measurement register url in result is invalid
-            or the request for the measurement register using the url failed.
+        Raises:
+            ApiError: If the measurement register url in result is invalid
+                or the request for the measurement register using the url failed.
 
-        :return:
+        Returns:
             The measurement register consists of a list of measurement register values.
             An empty list is returned when there is no data.
         """
@@ -687,29 +730,33 @@ class QuantumInspireAPI:
     def get_asset(self, asset_id: int) -> Dict[str, Any]:
         """ Gets the properties of the asset, given the asset_id.
 
-        :param asset_id: The asset identification number.
+        Args:
+            asset_id: The asset identification number.
 
-        :raises ApiError: If the requested asset does not exist.
+        Raises:
+            ApiError: If the requested asset does not exist.
 
-        :return:
-            The properties describing the asset:
+        Returns:
+            The properties describing the asset.
 
-            ======================= =========== ==================================================================
-            Key                     Type        Description
-            ======================= =========== ==================================================================
-            ``url``                 str         The url to get this asset.
-            ``id``                  int         Unique id of this asset.
-            ``name``                str         The name to get the asset.
-            ``contentType``         str         The description of the content e.g. 'application/qasm' or
-                                                'text/plain'.
-            ``content``             str         The content itself.
-                                                For example a cQASM program when linked to a job.
-            ``measurement_mask``    int         A mask for the measured bits in the cQASM program. The measurement_mask
-                                                is calculated when the asset is assigned to a job.
-            ``project``             str         Url to get the project properties for which
-                                                this asset was created.
-            ``project_id``          int         The project id of the project for which this asset was created.
-            ======================= =========== ==================================================================
+        The following table shows the properties of the asset:
+
+        ======================= =========== ==================================================================
+        Key                     Type        Description
+        ======================= =========== ==================================================================
+        ``url``                 str         The url to get this asset.
+        ``id``                  int         Unique id of this asset.
+        ``name``                str         The name to get the asset.
+        ``contentType``         str         The description of the content e.g. 'application/qasm' or
+                                            'text/plain'.
+        ``content``             str         The content itself.
+                                            For example a cQASM program when linked to a job.
+        ``measurement_mask``    int         A mask for the measured bits in the cQASM program. The measurement_mask
+                                            is calculated when the asset is assigned to a job.
+        ``project``             str         Url to get the project properties for which
+                                            this asset was created.
+        ``project_id``          int         The project id of the project for which this asset was created.
+        ======================= =========== ==================================================================
         """
         try:
             asset = self._action(['assets', 'read'], params={'id': asset_id})
@@ -720,7 +767,7 @@ class QuantumInspireAPI:
     def get_assets(self) -> List[Dict[str, Any]]:
         """ Gets all the assets registered for the user the API is currently authenticated for.
 
-        :return:
+        Returns:
             The assets with all of its properties.
             See :meth:`~.get_asset` for a description of the asset properties.
         """
@@ -730,13 +777,15 @@ class QuantumInspireAPI:
     def get_assets_from_project(self, project_id: int) -> List[Dict[str, Any]]:
         """ Gets the assets with its properties for a single project, given the project id.
 
-        :param project_id: The project identification number.
+        Args:
+            project_id: The project identification number.
 
-        :return:
+        Returns:
             List of assets with its properties for the project with identification `project_id`.
             An empty list is returned when the project has no assets.
 
-        :raises ApiError: If the project identified by `project_id` does not exist.
+        Raises:
+            ApiError: If the project identified by `project_id` does not exist.
         """
         try:
             assets: List[Dict[str, Any]] = self._action(['projects', 'assets', 'list'], params={'id': project_id})
@@ -747,11 +796,13 @@ class QuantumInspireAPI:
     def get_asset_from_job(self, job_id: int) -> Dict[str, Any]:
         """ Gets the asset data from the job, given the job_id.
 
-        :param job_id: The identification number of the job.
+        Args:
+            job_id: The identification number of the job.
 
-        :raises ApiError: If the requested asset with identification from the job 'input' field does not exist.
+        Raises:
+            ApiError: If the requested asset with identification from the job 'input' field does not exist.
 
-        :return:
+        Returns:
             The assets with all of its properties.
             See :meth:`~.get_asset` for a description of the asset properties.
         """
@@ -774,11 +825,12 @@ class QuantumInspireAPI:
         content of the cQASM program for the project given. Assets are deleted when the project for which the asset
         was created is deleted.
 
-        :param name: The name of the new asset.
-        :param project: The project to which the asset is linked to.
-        :param content: The cQASM code content.
+        Args:
+            name: The name of the new asset.
+            project: The project to which the asset is linked to.
+            content: The cQASM code content.
 
-        :return:
+        Returns:
             The properties of the asset.
             See :meth:`~.get_asset` for a description of the asset properties.
         """
@@ -800,12 +852,14 @@ class QuantumInspireAPI:
         Delays the process and requests the job status. The waiting loop is broken when the job status is
         completed or cancelled, or when the maximum number of tries is set and has been reached.
 
-        :param quantum_inspire_job: A job object.
-        :param collect_max_tries: The maximum number of times the job status is checked. When set, the value should be > 0.
-            When not set, the method waits until the job status is either completed or cancelled.
-        :param sec_retry_delay: The time delay in between job status checks in seconds.
+        Args:
+            quantum_inspire_job: A job object.
+            collect_max_tries: The maximum number of times the job status is checked.
+                When set, the value should be > 0.
+                When not set, the method waits until the job status is either completed or cancelled.
+            sec_retry_delay: The time delay in between job status checks in seconds.
 
-        :return:
+        Returns:
             True if the job result could be collected else False in hte first part of the tuple.
             The latter part of the tuple contains an (error)message.
         """
@@ -823,9 +877,10 @@ class QuantumInspireAPI:
     def _generate_error_result(message: str) -> Dict[str, Any]:
         """Generate an error result object
 
-        :param message: Reason for the failed job
+        Args:
+            message: Reason for the failed job
 
-        :return:
+        Returns:
             Result object containing an empty histogram and an error message
         """
         result_obj = {
@@ -853,15 +908,16 @@ class QuantumInspireAPI:
         are returned. When set, the value of collect_tries must be > 0. When collect_tries is not set,
         the waiting time for completion is not limited.
 
-        :param qasm: The cQASM code as string object.
-        :param backend_type: The backend_type to execute the algorithm on.
-        :param number_of_shots: Execution times of the algorithm before collecting the results.
-        :param collect_tries: The number of times the status of the job is check for completion before returning.
-        :param default_number_of_shots: The default used number of shots for the project.
-        :param identifier: The identifier to generate names for the project, asset and job when necessary.
-        :param full_state_projection: Do not use full state projection with simulations when set to False (default).
+        Args:
+            qasm: The cQASM code as string object.
+            backend_type: The backend_type to execute the algorithm on.
+            number_of_shots: Execution times of the algorithm before collecting the results.
+            collect_tries: The number of times the status of the job is check for completion before returning.
+            default_number_of_shots: The default used number of shots for the project.
+            identifier: The identifier to generate names for the project, asset and job when necessary.
+            full_state_projection: Do not use full state projection with simulations when set to False (default).
 
-        :return:
+        Returns:
             The results of the executed cQASM if successful else an error result if
             the results could not be collected within the given number of tries or the job failed.
             See :meth:`~.get_result` for a description of the result properties.
@@ -942,18 +998,19 @@ class QuantumInspireAPI:
         This class encapsulates the job and contains methods the get
         the status of the job and retrieve the execution results when the job is completed.
 
-        :param qasm: The qasm code as a string object.
-        :param backend_type: The backend_type to execute the algorithm on.
-        :param number_of_shots: Execution times of the algorithm before the results can be collected.
-        :param default_number_of_shots: The default used number of shots for the project.
-        :param identifier: The identifier used for generating names for the project, asset and job.
-        :param full_state_projection: Do not use full state projection when set to False (default).
-        :param project: The properties of an existing project, the asset and job are linked to. Only used
-            when the project_name member of the api is empty.
-        :param job_name: Name for the job that is to be executed, when None a job name is generated (see identifier)
-        :param user_data: Data that the user wants to pass along with the job.
+        Args:
+            qasm: The qasm code as a string object.
+            backend_type: The backend_type to execute the algorithm on.
+            number_of_shots: Execution times of the algorithm before the results can be collected.
+            default_number_of_shots: The default used number of shots for the project.
+            identifier: The identifier used for generating names for the project, asset and job.
+            full_state_projection: Do not use full state projection when set to False (default).
+            project: The properties of an existing project, the asset and job are linked to. Only used
+                when the project_name member of the api is empty.
+            job_name: Name for the job that is to be executed, when None a job name is generated (see identifier)
+            user_data: Data that the user wants to pass along with the job.
 
-        :return:
+        Returns:
             An encapsulated job object containing methods the get the status of the job and
             retrieve the execution results.
         """
