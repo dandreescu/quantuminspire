@@ -54,6 +54,7 @@ def uniform_uncorrelated_noise(p_error):
             print("no qubits corrupted")
     return apply_noise
 
+
 def uniform_correlated_noise(p_error):
     def apply_noise(circuit):
         any_corrupted = False
@@ -66,7 +67,7 @@ def uniform_correlated_noise(p_error):
         for i in range(circuit.num_qubits):
             if i in correlated_qubits:
                 if random.random() < p_error:
-                    print("correlated qubit ", i, " corrupted")
+                    print("qubit ", i, " corrupted")
                     matrix = get_random_noise_matrix()
                     err_op = Operator(matrix)
                     circuit.unitary(err_op, [i], label='error')
@@ -74,7 +75,7 @@ def uniform_correlated_noise(p_error):
                     for j in correlated_qubits:
                         if j != i:
                             if random.random() < p_error / correlation_strength:
-                                print("correlated qubit ", j, " corrupted due to correlation")
+                                print("qubit ", j, " corrupted due to correlation")
                                 matrix = get_random_noise_matrix()
                                 err_op = Operator(matrix)
                                 circuit.unitary(err_op, [j], label='error')
@@ -88,6 +89,7 @@ def uniform_correlated_noise(p_error):
         if not any_corrupted:
             print("no qubits corrupted")
     return apply_noise
+
 
 def bit_flip(apply_noise):
     QI.set_authentication(get_token_authentication(load_account()), QI_URL)
@@ -276,7 +278,7 @@ def la_flamme(apply_noise):
 
 def logical_qubit_error(p_error, repetitions, code):
 
-    noise_model = uniform_uncorrelated_noise(p_error)
+    noise_model = uniform_correlated_noise(p_error)
 
     total_prob = 0
     for i in range(repetitions):
