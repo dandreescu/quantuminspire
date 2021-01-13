@@ -54,6 +54,40 @@ def uniform_uncorrelated_noise(p_error):
             print("no qubits corrupted")
     return apply_noise
 
+def uniform_correlated_noise(p_error):
+    def apply_noise(circuit):
+        any_corrupted = False
+        num_correlated_qubits = 2
+        # correlated qubits are 1/correlation_strength as likely to corrupt the other qubits
+        correlation_strength = 0.5
+        # creates list with the indices of the correlated qubits
+        correlated_qubits = random.sample(range(0, circuit.num_qubits), num_correlated_qubits)
+        print('The correlated qubits are:', correlated_qubits)
+        for i in range(circuit.num_qubits):
+            if i in correlated_qubits:
+                if random.random() < p_error:
+                    print("correlated qubit ", i, " corrupted")
+                    matrix = get_random_noise_matrix()
+                    err_op = Operator(matrix)
+                    circuit.unitary(err_op, [i], label='error')
+                    any_corrupted = True
+                    for j in correlated_qubits:
+                        if j != i:
+                            if random.random() < p_error / correlation_strength:
+                                print("correlated qubit ", j, " corrupted due to correlation")
+                                matrix = get_random_noise_matrix()
+                                err_op = Operator(matrix)
+                                circuit.unitary(err_op, [j], label='error')
+            else:
+                if random.random() < p_error:
+                    print("qubit ", i, " corrupted")
+                    matrix = get_random_noise_matrix()
+                    err_op = Operator(matrix)
+                    circuit.unitary(err_op, [i], label='error')
+                    any_corrupted = True
+        if not any_corrupted:
+            print("no qubits corrupted")
+    return apply_noise
 
 def bit_flip(apply_noise):
     QI.set_authentication(get_token_authentication(load_account()), QI_URL)
