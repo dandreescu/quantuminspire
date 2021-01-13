@@ -74,6 +74,7 @@ def uniform_correlated_noise(p_error):
                     any_corrupted = True
                     for j in correlated_qubits:
                         if j != i:
+                                # probability for corruption is bigger due to correlation
                             if random.random() < p_error / correlation_strength:
                                 print("qubit ", j, " corrupted due to correlation")
                                 matrix = get_random_noise_matrix()
