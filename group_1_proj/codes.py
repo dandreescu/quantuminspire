@@ -304,6 +304,7 @@ def logical_qubit_error(p_error, repetitions, code):
 
     noise_model = uniform_correlated_noise(p_error, num_correlated_qubits=2, correlation_strength=0.5)
     # noise_model = nonuniform_uncorrelated_noise(p_error, num_bad_qubits=2, badness=0.5)
+    # noise_model = uniform_uncorrelated_noise(p_error)
 
     total_prob = 0
     for i in range(repetitions):
@@ -323,9 +324,9 @@ if __name__ == '__main__':
     p_error = [0.05 * i for i in range(11)]
     repetitions = 10
 
-    # "la_flamme": la_flamme , "bit_flip": bit_flip
-
-    codes = {"shor": shor}
+    codes = {"bit_flip": bit_flip,
+             "shor": shor,
+             "la_flamme": la_flamme}
 
     for c in codes:
         plt.plot(p_error, [logical_qubit_error(p, repetitions, codes[c]) for p in p_error], 'ro')
