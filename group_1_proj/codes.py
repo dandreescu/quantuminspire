@@ -55,6 +55,66 @@ def uniform_uncorrelated_noise(p_error):
     return apply_noise
 
 
+def uniform_correlated_noise(p_error, num_correlated_qubits, correlation_strength):
+    def apply_noise(circuit):
+        any_corrupted = False
+        # correlated qubits are 1/correlation_strength as likely to corrupt the other qubits
+        # creates list with the indices of the correlated qubits
+        correlated_qubits = random.sample(range(0, circuit.num_qubits), num_correlated_qubits)
+        print('The correlated qubits are:', correlated_qubits)
+        for i in range(circuit.num_qubits):
+            if i in correlated_qubits:
+                if random.random() < p_error:
+                    print("qubit ", i, " corrupted")
+                    matrix = get_random_noise_matrix()
+                    err_op = Operator(matrix)
+                    circuit.unitary(err_op, [i], label='error')
+                    any_corrupted = True
+                    for j in correlated_qubits:
+                        if j != i:
+                            if random.random() < p_error / correlation_strength:
+                                print("qubit ", j, " corrupted due to correlation")
+                                matrix = get_random_noise_matrix()
+                                err_op = Operator(matrix)
+                                circuit.unitary(err_op, [j], label='error')
+            else:
+                if random.random() < p_error:
+                    print("qubit ", i, " corrupted")
+                    matrix = get_random_noise_matrix()
+                    err_op = Operator(matrix)
+                    circuit.unitary(err_op, [i], label='error')
+                    any_corrupted = True
+        if not any_corrupted:
+            print("no qubits corrupted")
+    return apply_noise
+
+
+def nonuniform_uncorrelated_noise(p_error, num_bad_qubits, badness):
+    def apply_noise(circuit):
+        any_corrupted = False
+        # list with indices of the bad qubits
+        bad_qubits = random.sample(range(0, circuit.num_qubits), num_bad_qubits)
+        print(bad_qubits)
+        error_list = [p_error] * circuit.num_qubits
+        for i in bad_qubits:
+            # bad qubits are 1/badness times as likely to be corrupted
+            error_list[i] = p_error / badness
+        print(error_list)
+        for j in range(circuit.num_qubits):
+            if random.random() < error_list[j]:
+                if j in bad_qubits:
+                    print("bad qubit ", j, " corrupted")
+                else:
+                    print("qubit ", j, " corrupted")
+                matrix = get_random_noise_matrix()
+                err_op = Operator(matrix)
+                circuit.unitary(err_op, [j], label='error')
+                any_corrupted = True
+        if not any_corrupted:
+            print("no qubits corrupted")
+    return apply_noise
+
+
 def bit_flip(apply_noise):
     QI.set_authentication(get_token_authentication(load_account()), QI_URL)
     qi_backend = QI.get_backend('QX single-node simulator')
@@ -242,7 +302,9 @@ def la_flamme(apply_noise):
 
 def logical_qubit_error(p_error, repetitions, code):
 
-    noise_model = uniform_uncorrelated_noise(p_error)
+    noise_model = uniform_correlated_noise(p_error, num_correlated_qubits=2, correlation_strength=0.5)
+    # noise_model = nonuniform_uncorrelated_noise(p_error, num_bad_qubits=2, badness=0.5)
+    # noise_model = uniform_uncorrelated_noise(p_error)
 
     total_prob = 0
     for i in range(repetitions):
