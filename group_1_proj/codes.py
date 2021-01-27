@@ -222,6 +222,21 @@ def la_flamme(apply_noise):
     qc.h(1)
     qc.h(0)
 
+    matrices = [[[1, 0], [0, 1]],       # Identity
+                [[0, -1], [1, 0]],      # bit flip and sign alpha
+                [[-1, 0], [0, 1]],      # sign alpha
+                [[1, 0], [0, -1]],      # phase flip
+                [[-1, 0], [0, -1]],     # sign flip
+                [[0, -1], [-1, 0]]]     # bit and sign flip
+    o = [Operator(m) for m in matrices]
+    # see https://arxiv.org/pdf/quant-ph/9602019.pdf table 1
+    syndrome = {0b0000: o[0], 0b1101: o[1], 0b1111: o[2],
+                0b0001: o[3], 0b1010: o[3], 0b1100: o[3], 0b0101: o[3],
+                0b0011: o[4], 0b1000: o[4], 0b0100: o[4], 0b0010: o[4],
+                0b0110: o[5], 0b0111: o[5], 0b1011: o[5], 0b1110: o[5], 0b1001: o[5]}
+
+    # TODO: measure qubits 0,1,3,4 = c; apply syndrome[c] to qubit 2
+
     qi_job = execute(qc, backend=qi_backend, shots=1)
     qi_result = qi_job.result()
     probabilities_histogram = qi_result.get_probabilities(qc)
@@ -246,7 +261,7 @@ def logical_qubit_error(p_error, repetitions, code):
 
     total_prob = 0
     for i in range(repetitions):
-        print("run", i)
+        print("run", i, "prob", p_error)
         correct_prob = code(noise_model)
         total_prob += correct_prob
 
@@ -257,18 +272,17 @@ def logical_qubit_error(p_error, repetitions, code):
 
 
 if __name__ == '__main__':
-    ########################################################################################
     # set these parameters to your liking. Remember: 100 repetitions takes +/- 8 minutes
     p_error = [0.05 * i for i in range(11)]
-    repetitions = 10
+    repetitions = 100
 
-    codes = {"bit_flip": bit_flip,
-             "shor": shor,
-             "la_flamme": la_flamme}
+    codes = { "bit_flip": bit_flip,
+             "shor": shor}
+             # "la_flamme": la_flamme}
 
     for c in codes:
         plt.plot(p_error, [logical_qubit_error(p, repetitions, codes[c]) for p in p_error], 'ro')
         plt.savefig(f'{c}.png')
+        print(c)
         plt.clf()
 
-    ########################################################################################
